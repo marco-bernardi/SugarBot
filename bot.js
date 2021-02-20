@@ -34,7 +34,7 @@ async function abc() {
     return p;
     
   }
-  setInterval(() => bella(), 15000);
+  setInterval(() => bella(), 10000);
 
   
   async function bella(){
