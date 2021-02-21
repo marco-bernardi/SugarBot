@@ -1,11 +1,11 @@
+#! node
 const { Console } = require('console');
 const puppeteer = require('puppeteer');
 const https = require('https');
 const request = require('request');
 
 async function abc() {
-  const browser = await puppeteer.launch({headless: false,});
-
+  const browser = await puppeteer.launch({headless: true,});
   function makeid(length) {
     var result           = "";
     var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -18,24 +18,27 @@ async function abc() {
   async function checkCode(user, domain) {
     const p = new Promise((pippo, ten) => {
       request(`https://www.1secmail.com/api/v1/?action=getMessages&login=${user}&domain=${domain}`, { json: true }, (err, res, body) => {
-        if (err) { return console.log(err); }
-        const id = body[0].id;
-        //console.log(id);
+        if (err) { 
+          console.log(err); 
+        }
+        if (!body[0]){
+          ten("DIOPORCO");
+          return;
+        }
+        id = body[0].id;
         request(`https://www.1secmail.com/api/v1/?action=readMessage&login=${user}&domain=${domain}&id=${id}`, { json: true }, (err, res, body) => {
             if (err) { return console.log(err); }
             const testo = body.textBody;
             split = testo.split(":")[2].substring(0, 4);
             console.log(split);
-            pippo(split);
-  
+            pippo(split); 
         });  
       });
     })
-    return p;
-    
+    return p;    
   }
+  
   setInterval(() => bella(), 10000);
-
   
   async function bella(){
     const context = await browser.createIncognitoBrowserContext();
@@ -47,7 +50,6 @@ async function abc() {
     });
     https.get('https://www.1secmail.com/api/v1/?action=genRandomMailbox&count=1', (resp) => {
       let data = '';   
-      // A chunk of data has been received.
       resp.on('data', (chunk) => {
         data += chunk;
       });
@@ -74,10 +76,6 @@ async function abc() {
     await page.waitForSelector('a[data-type=email]');
     await new Promise(r => setTimeout(() => r(), 6000));
     await page.click('a[data-type=email]');
-    
-    //await new Promise(r => setTimeout(() => r(), 500));
-    //await page.waitForSelector('a[data-type=email]');
-    //await page.click('a[data-type=email]');
   
     await new Promise(r => setTimeout(() => r(), 15000))
   
@@ -85,7 +83,15 @@ async function abc() {
     console.log(esplit[0]);
     console.log(esplit[1]);
     
-    let codice = await checkCode(esplit[0],esplit[1]);
+    let codice = "diomaiale"
+    try {
+      codice = await checkCode(esplit[0],esplit[1]);
+    } catch (error) {
+      console.log(error);
+      await page.close();
+      return;
+    }
+    
     await page.waitForSelector('input[name=captcha]');
     await new Promise(r => setTimeout(() => r(), 500))
     await page.$eval('input[name=captcha]', (el, value) => el.value = value, codice);
@@ -96,5 +102,5 @@ async function abc() {
     await page.close();
   
   }
-  }
-  abc()
+}
+abc()
