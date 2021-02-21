@@ -4,6 +4,13 @@ const puppeteer = require('puppeteer');//headless browser emulator
 const https = require('https');
 const request = require('request');
 
+const frequency = 10000;
+const inputWaiting = 4000;
+const emailInputWait = 200;
+const emailSendCode = 2000;
+const codeFillTime = 500;
+const waitToQuit = 2000;
+
 async function checkCode(user, domain) { //confirmation code
   const p = new Promise((substring, error) => {
     request(`https://www.1secmail.com/api/v1/?action=getMessages&login=${user}&domain=${domain}`, { json: true }, (err, res, body) => {
@@ -11,7 +18,7 @@ async function checkCode(user, domain) { //confirmation code
         console.log(err); 
       }
       if (!body[0]){
-        error("Ops... 👉👈 tengo uno errore😓");
+        error("Ops... 👉👈 tengo uno errore😓\rDIOPORCO");
         return;
       }
       id = body[0].id;
@@ -67,7 +74,7 @@ async function main(browser){
     console.log("Error: " + err.message);
   });    
   var user = makeid(5)
-  await new Promise(r => setTimeout(() => r(), 8000))
+  await new Promise(r => setTimeout(() => r(), inputWaiting))
 
   console.log(user)
   await page.waitForSelector('input[name=username]');
@@ -77,10 +84,10 @@ async function main(browser){
   await page.waitForSelector('input[name=password]');
   await page.$eval('input[name=password]', el => el.value = 'Password1');
 
-  await new Promise(r => setTimeout(() => r(), 200))
+  await new Promise(r => setTimeout(() => r(), emailInputWait))
 
   await page.waitForSelector('a[data-type=email]');
-  await new Promise(r => setTimeout(() => r(), 6000));
+  await new Promise(r => setTimeout(() => r(), emailSendCode));
   await page.click('a[data-type=email]');
 
   await new Promise(r => setTimeout(() => r(), 15000))
@@ -89,7 +96,7 @@ async function main(browser){
   console.log(esplit[0]);
   console.log(esplit[1]);
   
-  let codice = " "
+  let codice = "DioCan"
   try {
     codice = await checkCode(esplit[0],esplit[1]);
   } catch (error) {
@@ -99,12 +106,12 @@ async function main(browser){
   }
   
   await page.waitForSelector('input[name=captcha]');
-  await new Promise(r => setTimeout(() => r(), 500))
+  await new Promise(r => setTimeout(() => r(), codeFillTime))
   await page.$eval('input[name=captcha]', (el, value) => el.value = value, codice);
   await (await page.waitForSelector('input[name=checkbox]')).click();
   await (await page.waitForSelector('input[type=submit]')).click();
 
-  await new Promise(r => setTimeout(() => r(), 2000))
+  await new Promise(r => setTimeout(() => r(), waitToQuit))
   await page.close();
 
 }
@@ -112,4 +119,4 @@ async function main(browser){
 setInterval(async function () {
   const browser = await puppeteer.launch({headless: true,});//lancia puppeteer senza "grafica"
   main(browser);
-}, 10000);
+}, frequency);
