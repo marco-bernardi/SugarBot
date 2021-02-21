@@ -4,7 +4,7 @@ const puppeteer = require('puppeteer');//headless browser emulator
 const https = require('https');
 const request = require('request');
 
-const frequency = 10000;
+const frequency = 5000;
 const inputWaiting = 4000;
 const emailInputWait = 200;
 const emailSendCode = 2000;
@@ -45,8 +45,8 @@ function makeid(length) {//generates a casual id
 }
 
 async function main(browser){
-  const context = await browser.createIncognitoBrowserContext();
-  const page = await context.newPage();
+  const pages = await browser.pages();
+  const page = pages[0];
 
   await page.setRequestInterception(true);//blocks images and fonts
   page.on('request', (request) => {
@@ -117,6 +117,6 @@ async function main(browser){
 }
 
 setInterval(async function () {
-  const browser = await puppeteer.launch({headless: true,});//lancia puppeteer senza "grafica"
+  const browser = await puppeteer.launch({headless: false, args: ['--incognito']});//lancia puppeteer senza "grafica" e in incognito
   main(browser);
 }, frequency);
