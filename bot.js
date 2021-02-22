@@ -4,17 +4,20 @@ const puppeteer = require('puppeteer');//headless browser emulator
 const https = require('https');
 const request = require('request');
 
-const frequency = 5000;
+const frequency = 10000;
 const inputWaiting = 4000;
 const emailInputWait = 200;
-const emailSendCode = 2000;
+const emailSendCode = 15000;
+const waitForCode = 15000;
 const codeFillTime = 500;
 const waitToQuit = 2000;
+let invites = 0;
 let link = 'https://sugargoo.com/index/user/register/invitehttps://sugargoo.com/index/user/register/invite/ODY1OA==.html/ODY1OA%3D%3D.html'
 let myArgs = process.argv.slice(2);
 if (process.argv.length >= 3){
   link = myArgs[0];
 }
+
 async function checkCode(user, domain) { //confirmation code
   const p = new Promise((substring, error) => {
     request(`https://www.1secmail.com/api/v1/?action=getMessages&login=${user}&domain=${domain}`, { json: true }, (err, res, body) => {
@@ -22,7 +25,7 @@ async function checkCode(user, domain) { //confirmation code
         console.log(err); 
       }
       if (!body[0]){
-        error("Ops... 👉👈 tengo uno errore😓\rDIOPORCO");
+        error("Ops... 👉👈 tengo uno errore😓\n\rDIOPORCO");
         return;
       }
       id = body[0].id;
@@ -52,15 +55,16 @@ async function main(browser){
   const pages = await browser.pages();
   const page = pages[0];
 
-  await page.setRequestInterception(true);//blocks images and fonts
+  await page.setRequestInterception(true);//blocks images ,fonts and css
   page.on('request', (request) => {
     if (request.resourceType() === 'image') request.abort();
     else if (request.resourceType() === 'media') request.abort();
     else if (request.resourceType() === 'font') request.abort();
+    else if (request.resourceType() === 'stylesheet') request.abort();
     else request.continue();
   }); 
 
-  page.setViewport({ width: 1366, height: 768 });
+  page.setViewport({ width: 900, height: 900 });
   var email;
   await page.goto(link, {
     waitUntil: 'networkidle2',
@@ -94,7 +98,7 @@ async function main(browser){
   await new Promise(r => setTimeout(() => r(), emailSendCode));
   await page.click('a[data-type=email]');
 
-  await new Promise(r => setTimeout(() => r(), 15000))
+  await new Promise(r => setTimeout(() => r(), waitForCode))
 
   var esplit = email.split("@");
   console.log(esplit[0]);
@@ -117,6 +121,8 @@ async function main(browser){
 
   await new Promise(r => setTimeout(() => r(), waitToQuit))
   await page.close();
+  invites = invites + 1;
+  console.log(`inviti totali:${invites}`);
 
 }
 
