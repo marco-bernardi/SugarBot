@@ -10,7 +10,11 @@ const emailInputWait = 200;
 const emailSendCode = 2000;
 const codeFillTime = 500;
 const waitToQuit = 2000;
-
+let link = 'https://sugargoo.com/index/user/register/invitehttps://sugargoo.com/index/user/register/invite/ODY1OA==.html/ODY1OA%3D%3D.html'
+let myArgs = process.argv.slice(2);
+if (process.argv.length >= 3){
+  link = myArgs[0];
+}
 async function checkCode(user, domain) { //confirmation code
   const p = new Promise((substring, error) => {
     request(`https://www.1secmail.com/api/v1/?action=getMessages&login=${user}&domain=${domain}`, { json: true }, (err, res, body) => {
@@ -58,7 +62,7 @@ async function main(browser){
 
   page.setViewport({ width: 1366, height: 768 });
   var email;
-  await page.goto('https://sugargoo.com/index/user/register/invite/ODY1OA%3D%3D.html', {
+  await page.goto(link, {
     waitUntil: 'networkidle2',
   });
   https.get('https://www.1secmail.com/api/v1/?action=genRandomMailbox&count=1', (resp) => {
@@ -117,6 +121,6 @@ async function main(browser){
 }
 
 setInterval(async function () {
-  const browser = await puppeteer.launch({headless: false, args: ['--incognito']});//lancia puppeteer senza "grafica" e in incognito
+  const browser = await puppeteer.launch({headless: true, args: ['--incognito']});//lancia puppeteer senza "grafica" e in incognito
   main(browser);
 }, frequency);
