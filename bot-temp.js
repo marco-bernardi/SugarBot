@@ -104,8 +104,7 @@ async function main(browser){
     code = await value.split(":")[2].slice(0, 4)}
   catch{
     console.log("Ci vuole più tempo per caricare la mail");
-    tempmail.close();
-    sugargoo.close();
+    browser.close();
     return;
   };
   console.log(code);
@@ -118,7 +117,7 @@ async function main(browser){
   await (await sugargoo.waitForSelector('input[type=submit]')).click();
 
   await new Promise(r => setTimeout(() => r(), waitToQuit))
-  await sugargoo.close();
+  browser.close();
   invites = invites + 1;
   console.log(`inviti totali:${invites}`);
 }
