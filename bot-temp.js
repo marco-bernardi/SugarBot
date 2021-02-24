@@ -19,10 +19,10 @@ if (process.argv.length >= 3){
 }
 
 function makeid(length) {//generates a casual id
-  var result           = "";
-  var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  var charactersLength = characters.length;
-  for ( var i = 0; i < length; i++ ) {
+  let result           = "";
+  const characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  const charactersLength = characters.length;
+  for ( let i = 0; i < length; i++ ) {
      result += characters.charAt(Math.floor(Math.random() * charactersLength));
   }
   return result;
@@ -47,6 +47,11 @@ async function getMail(tempmail){
   await new Promise(r => setTimeout(() => r(), 8000));
   const mail = await tempmail.$eval('input#mail.emailbox-input', el => el.value); //gets mail
   return mail;
+}
+
+function moveMouse(){
+  tempmail.mouse.move(Math.floor(Math.random() * 100) , Math.floor(Math.random() * 100));
+  console.log("mouse mosso");
 }
 
 async function main(browser){
@@ -86,14 +91,9 @@ async function main(browser){
 
   //---------------------------------------------------------------------------------------------------------------------bestemmie
   console.log("apertura mail...");
-  async ()=>{//porcodio come funziona javascript la voglio fare mentre aspetta sta roba ma non la fa mai
-    setInterval(()=>{
-      tempmail.mouse.move(Math.floor(Math.random() * 100) , Math.floor(Math.random() * 100));
-      console.log("mouse mosso");
-    },1000);
-  }
+  var intervalId = setInterval(moveMouse ,1000); //se gli do la variabile non parte
   console.log("aspettando");
-  await tempmail.waitForSelector('span[title="noreply@sugargoo.com"]', {timeout: 0});
+  await tempmail.waitForSelector('span[title="noreply@sugargoo.com"]', {timeout: 0}).then(clearInterval(intervalId));
   await tempmail.click('span[title="noreply@sugargoo.com"]');
   await tempmail.waitForSelector('.inbox-data-content-intro');
   await new Promise(r => setTimeout(() => r(), 20000));
@@ -123,7 +123,7 @@ setInterval(async function () {
 }, frequency);*/
 
 async function asd(){
-  const browser = await puppeteer.launch({headless: false, args: ['--incognito']});//lancia puppeteer senza "grafica" e in incognito
+  const browser = await puppeteer.launch({headless: true, args: ['--incognito']});//lancia puppeteer senza "grafica" e in incognito
   main(browser);
 }
 asd()
