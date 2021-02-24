@@ -4,7 +4,7 @@ const puppeteer = require('puppeteer');//headless browser emulator
 const https = require('https');
 const request = require('request');
 
-const frequency = 10000;
+const frequency = 20000;
 const inputWaiting = 4000;
 const emailInputWait = 200;
 const emailSendCode = 15000;
@@ -12,7 +12,7 @@ const waitForCode = 5000;
 const codeFillTime = 500;
 const waitToQuit = 2000;
 let invites = 0;
-let link = 'https://sugargoo.com/index/user/register/invite/MTI1Nzg%3D.html'
+let link = 'https://sugargoo.com/index/user/register/invite/MTI1MjM%3D.html'
 let myArgs = process.argv.slice(2);
 if (process.argv.length >= 3){
   link = myArgs[0];
@@ -49,7 +49,7 @@ async function getMail(tempmail){
   return mail;
 }
 
-function moveMouse(){
+function moveMouse(tempmail){
   tempmail.mouse.move(Math.floor(Math.random() * 100) , Math.floor(Math.random() * 100));
   console.log("mouse mosso");
 }
@@ -90,51 +90,22 @@ async function main(browser){
   await new Promise(r => setTimeout(() => r(), waitForCode));
 
   //---------------------------------------------------------------------------------------------------------------------bestemmie
-  console.log("apertura mail...");
-
-  //non ne funziona neanche uno
-
-  /*
-  var intervalId;
-  intervalId = setInterval(moveMouse(tempmail) ,1000); //se gli do la variabile non parte
-  console.log(intervalId);*/
-
-  /*
-  var intervalId;
+  console.log(`apertura ${email}`);
+  
+  let intervalId;
   intervalId = setInterval( () => {
     tempmail.mouse.move(Math.floor(Math.random() * 100) , Math.floor(Math.random() * 100));
-    console.log("mouse mosso");
   },1000);
-  console.log(intervalId);/*
 
-  /*let mouse = true;
-  setTimeout(() => {while (mouse) {moveMouse(tempmail)} },1000);*/
-
-  /*
-  let mouse = true;
-  while (mouse) {
-    await new Promise(r => setTimeout(() => r(), 1000));
-    moveMouse(tempmail);
-  }*/
-
-  /*
-  var timer = null;
-  var updatetimer = function () {
-    tempmail.mouse.move(Math.floor(Math.random() * 100) , Math.floor(Math.random() * 100));
-    console.log("mouse mosso");
-    timer = setTimeout(updatetimer, 10000);
-  };*/
-
-
-  console.log("aspettando");
-  await tempmail.waitForSelector('span[title="noreply@sugargoo.com"]', {timeout: 0})//.then(clearTimeout(timer));//.then(clearInterval(intervalId));//.then(mouse = false)
+  await tempmail.waitForSelector('span[title="noreply@sugargoo.com"]', {timeout: 0});
+  clearInterval(intervalId);
+  //console.log("mail caricata");
   await tempmail.click('span[title="noreply@sugargoo.com"]');
   await tempmail.waitForSelector('.inbox-data-content-intro');
-  await new Promise(r => setTimeout(() => r(), 20000));
+  await new Promise(r => setTimeout(() => r(), 6000));
   const value = await tempmail.$eval('.inbox-data-content-intro', el => el.innerText);
   const code = await value.split(":")[2].slice(0, 4);
   console.log(code);
-  
 
   await tempmail.close();
   await sugargoo.waitForSelector('input[name=captcha]');
@@ -147,17 +118,9 @@ async function main(browser){
   await sugargoo.close();
   invites = invites + 1;
   console.log(`inviti totali:${invites}`);
-
 }
 
-/*
 setInterval(async function () {
-  const browser = await puppeteer.launch({headless: false, args: ['--incognito']});//lancia puppeteer senza "grafica" e in incognito
-  main(browser);
-}, frequency);*/
-
-async function asd(){
   const browser = await puppeteer.launch({headless: true, args: ['--incognito']});//lancia puppeteer senza "grafica" e in incognito
   main(browser);
-}
-asd()
+}, frequency);
