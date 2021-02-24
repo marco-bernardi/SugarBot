@@ -4,7 +4,7 @@ const puppeteer = require('puppeteer');//headless browser emulator
 const https = require('https');
 const request = require('request');
 
-const frequency = 20000;
+const frequency = 30000;
 const inputWaiting = 4000;
 const emailInputWait = 200;
 const emailSendCode = 15000;
@@ -47,11 +47,6 @@ async function getMail(tempmail){
   await new Promise(r => setTimeout(() => r(), 8000));
   const mail = await tempmail.$eval('input#mail.emailbox-input', el => el.value); //gets mail
   return mail;
-}
-
-function moveMouse(tempmail){
-  tempmail.mouse.move(Math.floor(Math.random() * 100) , Math.floor(Math.random() * 100));
-  console.log("mouse mosso");
 }
 
 async function main(browser){
@@ -104,7 +99,15 @@ async function main(browser){
   await tempmail.waitForSelector('.inbox-data-content-intro');
   await new Promise(r => setTimeout(() => r(), 6000));
   const value = await tempmail.$eval('.inbox-data-content-intro', el => el.innerText);
-  const code = await value.split(":")[2].slice(0, 4);
+  let code = "";
+  try{
+    code = await value.split(":")[2].slice(0, 4)}
+  catch{
+    console.log("Ci vuole più tempo per caricare la mail");
+    tempmail.close();
+    sugargoo.close();
+    return;
+  };
   console.log(code);
 
   await tempmail.close();
