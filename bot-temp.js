@@ -91,9 +91,43 @@ async function main(browser){
 
   //---------------------------------------------------------------------------------------------------------------------bestemmie
   console.log("apertura mail...");
-  var intervalId = setInterval(moveMouse ,1000); //se gli do la variabile non parte
+
+  //non ne funziona neanche uno
+
+  /*
+  var intervalId;
+  intervalId = setInterval(moveMouse(tempmail) ,1000); //se gli do la variabile non parte
+  console.log(intervalId);*/
+
+  /*
+  var intervalId;
+  intervalId = setInterval( () => {
+    tempmail.mouse.move(Math.floor(Math.random() * 100) , Math.floor(Math.random() * 100));
+    console.log("mouse mosso");
+  },1000);
+  console.log(intervalId);/*
+
+  /*let mouse = true;
+  setTimeout(() => {while (mouse) {moveMouse(tempmail)} },1000);*/
+
+  /*
+  let mouse = true;
+  while (mouse) {
+    await new Promise(r => setTimeout(() => r(), 1000));
+    moveMouse(tempmail);
+  }*/
+
+  /*
+  var timer = null;
+  var updatetimer = function () {
+    tempmail.mouse.move(Math.floor(Math.random() * 100) , Math.floor(Math.random() * 100));
+    console.log("mouse mosso");
+    timer = setTimeout(updatetimer, 10000);
+  };*/
+
+
   console.log("aspettando");
-  await tempmail.waitForSelector('span[title="noreply@sugargoo.com"]', {timeout: 0}).then(clearInterval(intervalId));
+  await tempmail.waitForSelector('span[title="noreply@sugargoo.com"]', {timeout: 0})//.then(clearTimeout(timer));//.then(clearInterval(intervalId));//.then(mouse = false)
   await tempmail.click('span[title="noreply@sugargoo.com"]');
   await tempmail.waitForSelector('.inbox-data-content-intro');
   await new Promise(r => setTimeout(() => r(), 20000));
