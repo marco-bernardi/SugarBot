@@ -60,11 +60,13 @@ async function main(browser){
   sugargoo.setViewport({ width: 900, height: 900 });
   tempmail.setViewport({ width: 900, height: 900 });
 
-  await sugargoo.goto(link, {
+  //opens the pages asyncronously
+  promise1 = sugargoo.goto(link, {
     waitUntil: 'networkidle2',
   });
-  let email = await getMail(tempmail);
+  const email = await getMail(tempmail);
     
+  //generates a fake id
   const user = makeid(5);
   await new Promise(r => setTimeout(() => r(), inputWaiting));
 
@@ -85,10 +87,10 @@ async function main(browser){
   await new Promise(r => setTimeout(() => r(), waitForCode));
 
   //---------------------------------------------------------------------------------------------------------------------bestemmie
-  console.log(`apertura ${email}`);
+  console.log(`opening ${email} inbox`);
   
-  let intervalId;
-  intervalId = setInterval( () => {
+  //moves the mouse randomly to trigger MouseEvent
+  let intervalId = setInterval( () => {
     tempmail.mouse.move(Math.floor(Math.random() * 100) , Math.floor(Math.random() * 100));
   },1000);
 
