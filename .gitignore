@@ -104,9 +104,10 @@ dist
 .tern-port
 
 #vscode
-.vs/
+.vs
 
 #prettier
 .prettierrc
 
 .gitignore
+test.js
