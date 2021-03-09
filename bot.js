@@ -81,8 +81,8 @@ async function main(browser){
   }).on("error", (err) => {
     console.log("Error: " + err.message);
   });    
-  var user = makeid(5)
-  await new Promise(r => setTimeout(() => r(), inputWaiting))
+  const user = makeid(5);
+  await new Promise(r => setTimeout(() => r(), inputWaiting));
 
   console.log(user)
   await page.waitForSelector('input[name=username]');
