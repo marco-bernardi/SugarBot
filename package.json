@@ -3,5 +3,10 @@
     "https": "^1.0.0",
     "puppeteer": "^7.1.0",
     "request": "^2.88.2"
+  },
+  "name": "sugarbot",
+  "version": "4.2.0",
+  "scripts": {
+    "start": "node bot-temp.js"
   }
 }
