@@ -5,7 +5,8 @@ const https = require('https');
 const request = require('request');
 
 //TODO: mettere i campi su un config.json
-const frequency = 10000;
+const frequency = 300000;
+const frequencyRandomness = 30000
 const inputWaiting = 4000;
 const emailInputWait = 200;
 const emailSendCode = 15000;
@@ -13,7 +14,7 @@ const waitForCode = 5000;
 const codeFillTime = 500;
 const waitToQuit = 2000;
 let invites = 0;
-let link = 'https://sugargoo.com/index/user/register/invite/MTI1MjM%3D.html'
+let link = 'https://sugargoo.com/index/user/register/invite/MTYwNDI%3D.html'
 let myArgs = process.argv.slice(2);
 if (process.argv.length >= 3){
   link = myArgs[0];
@@ -164,4 +165,4 @@ async function main(){
 
 setInterval(async function () {
     main();
-}, frequency);
+}, frequency + (Math.random() * frequencyRandomness));
