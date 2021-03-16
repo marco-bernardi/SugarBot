@@ -125,7 +125,7 @@ async function confirmCode(sugargoo, code) {
 
 async function main(){
   //lancia puppeteer senza "grafica" e in incognito
-  const browser = await puppeteer.launch({headless: false, args: [`--incognito`]});
+  const browser = await puppeteer.launch({headless: true, args: [`--incognito`]});
   const pages = await browser.pages();
   const sugargoo = pages[0];
   const tempmail = await browser.newPage();
@@ -163,6 +163,7 @@ async function main(){
   console.log(`inviti totali:${invites}`);
 }
 
+main() //does one main asap and then waits the interval
 setInterval(async function () {
     main();
 }, frequency + (Math.random() * frequencyRandomness));
