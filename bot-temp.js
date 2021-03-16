@@ -1,18 +1,8 @@
 #! node
-const { Console } = require('console');
 const puppeteer = require('puppeteer');//headless browser emulator
-const https = require('https');
 const request = require('request');
+const config = require('./config');
 
-//TODO: mettere i campi su un config.json
-const frequency = 300000;
-const frequencyRandomness = 30000
-const inputWaiting = 4000;
-const emailInputWait = 200;
-const emailSendCode = 15000;
-const waitForCode = 5000;
-const codeFillTime = 500;
-const waitToQuit = 2000;
 let invites = 0;
 let link = 'https://sugargoo.com/index/user/register/invite/MTYwNDI%3D.html'
 let myArgs = process.argv.slice(2);
@@ -77,13 +67,13 @@ async function sugarFill(sugargoo, user, email) {
   await sugargoo.waitForSelector('input[name=password]');
   await sugargoo.$eval('input[name=password]', el => el.value = 'Password1');
 
-  await new Promise(r => setTimeout(() => r(), emailInputWait));
+  await new Promise(r => setTimeout(() => r(), config.emailInputWait));
 
   await sugargoo.waitForSelector('a[data-type=email]');
-  await new Promise(r => setTimeout(() => r(), emailSendCode));
+  await new Promise(r => setTimeout(() => r(), config.emailSendCode));
   await sugargoo.click('a[data-type=email]');
 
-  await new Promise(r => setTimeout(() => r(), waitForCode));
+  await new Promise(r => setTimeout(() => r(), config.waitForCode));
   return;
 }
 
@@ -117,7 +107,7 @@ async function getCode(tempmail, browser){
 //fills the code
 async function confirmCode(sugargoo, code) {
   await sugargoo.waitForSelector('input[name=captcha]');
-  await new Promise(r => setTimeout(() => r(), codeFillTime));
+  await new Promise(r => setTimeout(() => r(), config.codeFillTime));
   await sugargoo.$eval('input[name=captcha]', (el, value) => el.value = value, code);
   await (await sugargoo.waitForSelector('input[name=checkbox]')).click();
   await (await sugargoo.waitForSelector('input[type=submit]')).click();
@@ -144,7 +134,7 @@ async function main(){
     
   //generates a fake id
   const user = makeid(5);
-  await new Promise(r => setTimeout(() => r(), inputWaiting));
+  await new Promise(r => setTimeout(() => r(), config.inputWaiting));
 
   console.log(user);
   //fills sugargoo page
@@ -157,7 +147,7 @@ async function main(){
   //fills the code
   await confirmCode(sugargoo, code);
 
-  await new Promise(r => setTimeout(() => r(), waitToQuit))
+  await new Promise(r => setTimeout(() => r(), config.waitToQuit))
   browser.close();
   invites = invites + 1;
   console.log(`inviti totali:${invites}`);
@@ -166,4 +156,4 @@ async function main(){
 main() //does one main asap and then waits the interval
 setInterval(async function () {
     main();
-}, frequency + (Math.random() * frequencyRandomness));
+}, config.frequency + (Math.random() * config.frequencyRandomness));
