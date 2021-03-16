@@ -10,7 +10,7 @@ if (process.argv.length >= 3){
   link = myArgs[0];
 }
 
-async function getProxy() {
+async function getProxy() {//not used
   request("https://raw.githubusercontent.com/scidam/proxy-list/master/proxy.json", {json: true}, (error, res, body) => {
     if (error) {
         return console.log(error);
@@ -86,7 +86,6 @@ async function getCode(tempmail, browser){
   
     await tempmail.waitForSelector('span[title="noreply@sugargoo.com"]', {timeout: 0});
     clearInterval(intervalId);
-    //console.log("mail caricata");
     await tempmail.click('span[title="noreply@sugargoo.com"]');
     await tempmail.waitForSelector('.inbox-data-content-intro');
     await new Promise(r => setTimeout(() => r(), 6000));
@@ -96,7 +95,7 @@ async function getCode(tempmail, browser){
       code = await value.split(":")[2].slice(0, 4)
       await tempmail.close();
     }catch{
-      console.log("Ci vuole più tempo per caricare la mail");
+      console.log("I need more time loading the mail page");
       browser.close();
       return;
     };
